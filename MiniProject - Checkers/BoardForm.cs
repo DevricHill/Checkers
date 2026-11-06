@@ -176,8 +176,7 @@ namespace MiniProject___Checkers
             SetUp();
             CurrentBoard();
 
-            if (Data.IsSinglePlayer) SinglePlayer();
-            else Multiplayer();
+            Multiplayer();
 
             ShowTurn();
 

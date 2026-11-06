@@ -15,16 +15,9 @@ namespace MiniProject___Checkers
             InitializeComponent();
         }
 
-        private void btnSinglePlayer_Click(object sender, EventArgs e)
-        {
-            Data.IsSinglePlayer = true;
-
-            MessageBox.Show("Coming Soon...", "Wait for Update");
-        }
-
+      
         private void btnMultiplayer_Click(object sender, EventArgs e)
         {
-            Data.IsSinglePlayer = false;
 
             BoardForm boardForm = new BoardForm();
             boardForm.Show();
