@@ -142,7 +142,7 @@ namespace MiniProject___Checkers
                     }
                     else
                     {
-                        txtGridInfo.Text = $"{row}-{col}: is not a valid choice";
+                        txtGridInfo.Text = $"{row + 1}-{col + 1}: is not a valid choice";
                         
                     }
 
