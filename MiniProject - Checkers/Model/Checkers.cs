@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Text;
 
 namespace MiniProject___Checkers.Model
@@ -17,9 +16,9 @@ namespace MiniProject___Checkers.Model
 
         //Reference Piece Actions
         private int[,] _referencePosition;
-        public int[,] JumppedCoords;
-        private bool isJumpped;
-        public bool IsJumpped { get { return isJumpped; } }
+        public int[,] JumpedCoords;
+        private bool isJumped;
+        public bool IsJumped { get { return isJumped; } }
 
         private string _playerMoved;
         public string PlayerMoved { get { return _playerMoved; } }
@@ -39,18 +38,18 @@ namespace MiniProject___Checkers.Model
         {
             CheckerBoard = new Dictionary<string, char>();
             CreateBoard(RowSize, ColumnSize);
-            isJumpped = false;
+            isJumped = false;
             IsLoop = true;
             Turn = SetRandomTurn();
 
-            ResetPostion();
+            ResetPosition();
             _playerMoved = Turn == _pieces[0] ? "Black" : "Red";
-            JumppedCoords = new int[1,2];
+            JumpedCoords = new int[1,2];
         }
 
         public void SwitchTurn()
         {
-            isJumpped = false;
+            isJumped = false;
 
             if (Turn == _pieces[0]) Turn = _pieces[2];
             else Turn = _pieces[0];
@@ -107,12 +106,12 @@ namespace MiniProject___Checkers.Model
 
                         if(jumpped == _pieces[2] || jumpped == _pieces[3])
                         {
-                            JumppedCoords[0, 0] = midRow;
-                            JumppedCoords[0, 1] = midCol;
+                            JumpedCoords[0, 0] = midRow;
+                            JumpedCoords[0, 1] = midCol;
 
                             CheckerBoard[$"{midRow} {midCol}"] = 'B';
 
-                            isJumpped = true;
+                            isJumped = true;
                             return true;
                         }
                     }
@@ -126,16 +125,16 @@ namespace MiniProject___Checkers.Model
                     {
                         int midRow = (position.row + newPosition.newRow) / 2;
                         int midCol = (position.col + newPosition.newCol) / 2;
-                        char jummped = CheckerBoard[$"{midRow} {midCol}"];
+                        char jumped = CheckerBoard[$"{midRow} {midCol}"];
 
-                        if(jummped == _pieces[2] ||  jummped == _pieces[3])
+                        if(jumped == _pieces[2] ||  jumped == _pieces[3])
                         {
-                            JumppedCoords[0, 0] = midRow;
-                            JumppedCoords[0, 1] = midCol;
+                            JumpedCoords[0, 0] = midRow;
+                            JumpedCoords[0, 1] = midCol;
 
                             CheckerBoard[$"{midRow} {midCol}"] = 'B';
 
-                            isJumpped = true;
+                            isJumped = true;
                             return true;
                         }
                     }
@@ -169,12 +168,12 @@ namespace MiniProject___Checkers.Model
 
                         if (jumpped == _pieces[0] || jumpped == _pieces[1])
                         {
-                            JumppedCoords[0, 0] = midRow;
-                            JumppedCoords[0, 1] = midCol;
+                            JumpedCoords[0, 0] = midRow;
+                            JumpedCoords[0, 1] = midCol;
 
                             CheckerBoard[$"{midRow} {midCol}"] = 'B';
 
-                            isJumpped = true;
+                            isJumped = true;
                             return true;
                         }
                     }
@@ -188,16 +187,16 @@ namespace MiniProject___Checkers.Model
                     {
                         int midRow = (position.row + newPosition.newRow) / 2;
                         int midCol = (position.col + newPosition.newCol) / 2;
-                        char jummped = CheckerBoard[$"{midRow} {midCol}"];
+                        char jumped = CheckerBoard[$"{midRow} {midCol}"];
 
-                        if (jummped == _pieces[0] || jummped == _pieces[1])
+                        if (jumped == _pieces[0] || jumped == _pieces[1])
                         {
-                            JumppedCoords[0, 0] = midRow;
-                            JumppedCoords[0, 1] = midCol;
+                            JumpedCoords[0, 0] = midRow;
+                            JumpedCoords[0, 1] = midCol;
 
                             CheckerBoard[$"{midRow} {midCol}"] = 'B';
 
-                            isJumpped = true;
+                            isJumped = true;
                             return true;
                         }
                     }
@@ -589,7 +588,7 @@ namespace MiniProject___Checkers.Model
             return false;
         }
 
-        public void ResetPostion()
+        public void ResetPosition()
         {
             positionCount = 0;
             _referencePosition = new int[2, 2];

@@ -21,7 +21,7 @@ namespace MiniProject___Checkers
             InitializeComponent();
         }
 
-        //Visual Repesentation of the board
+        //Visual Representation of the board
         Button[,] buttons = new Button[8, 8];
         void SetUp()
         {
@@ -111,7 +111,7 @@ namespace MiniProject___Checkers
                         {
                             selected[counter] = clicked;
                             txtGridInfo.Text = $"{newCheckers.PlayerMoved} Piece: {row + 1}-{col + 1}";
-                            newCheckers.ResetPostion();
+                            newCheckers.ResetPosition();
 
                             newCheckers.Insert((row, col), newCheckers.PrePosition);
                             counter++;
