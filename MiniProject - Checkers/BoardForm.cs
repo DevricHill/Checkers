@@ -206,7 +206,7 @@ namespace MiniProject___Checkers
             {
                 MessageBox.Show(newCheckers.HasWon);
 
-                Form1 form1 = new Form1();
+                MainMenuForm form1 = new MainMenuForm();
 
                 form1.Show();
                 this.Close();
@@ -217,7 +217,7 @@ namespace MiniProject___Checkers
             if (newCheckers.IsDraw())
             {
                 MessageBox.Show("It's a draw!");
-                Form1 form1 = new Form1();
+                MainMenuForm form1 = new MainMenuForm();
 
                 form1.Show();
                 this.Close();
