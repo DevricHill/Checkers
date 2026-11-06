@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Text;
 
 namespace MiniProject___Checkers.Model
@@ -84,127 +85,56 @@ namespace MiniProject___Checkers.Model
             }
         }
 
-        public bool IsInXRange((int row, int col) position, (int newRow, int newCol) newPosition)
+        public char PiecePosition(int row, int column)
         {
-            if (CheckerBoard[$"{newPosition.newRow} {newPosition.newCol}"] != 'B')
-            {
-                return false;
-            }
-
-            int rowDifference = newPosition.newRow - position.row;
-            int colDifference = Math.Abs(position.col - newPosition.newCol);
-
-            switch (CheckerBoard[$"{position.row} {position.col}"]) 
-            {
-                case 'x':
-                    if (rowDifference == 1 && colDifference == 1) return true;
-                    if (rowDifference == 2 && colDifference == 2)
-                    {
-                        int midRow = (position.row + newPosition.newRow) / 2;
-                        int midCol = (position.col + newPosition.newCol) / 2;
-                        char jumpped = CheckerBoard[$"{midRow} {midCol}"];
-
-                        if(jumpped == _pieces[2] || jumpped == _pieces[3])
-                        {
-                            JumpedCoords[0, 0] = midRow;
-                            JumpedCoords[0, 1] = midCol;
-
-                            CheckerBoard[$"{midRow} {midCol}"] = 'B';
-
-                            isJumped = true;
-                            return true;
-                        }
-                    }
-
-                    break;
-                case 'X':
-                    int positiveRowDifference = Math.Abs(rowDifference);
-
-                    if (positiveRowDifference == 1 && colDifference == 1) return true;
-                    if (positiveRowDifference == 2 && colDifference == 2)
-                    {
-                        int midRow = (position.row + newPosition.newRow) / 2;
-                        int midCol = (position.col + newPosition.newCol) / 2;
-                        char jumped = CheckerBoard[$"{midRow} {midCol}"];
-
-                        if(jumped == _pieces[2] ||  jumped == _pieces[3])
-                        {
-                            JumpedCoords[0, 0] = midRow;
-                            JumpedCoords[0, 1] = midCol;
-
-                            CheckerBoard[$"{midRow} {midCol}"] = 'B';
-
-                            isJumped = true;
-                            return true;
-                        }
-                    }
-                    
-                    break;
-            
-            }
-
-            return false;
+            return CheckerBoard[$"{row} {column}"];
         }
 
-        public bool IsInYRange((int row, int col) position, (int newRow, int newCol) newPosition)
+        public bool IsRed(char piece)
         {
-            if (CheckerBoard[$"{newPosition.newRow} {newPosition.newCol}"] != 'B')
+            return piece == _pieces[2] || piece == _pieces[3];
+        }
+
+        public bool IsBlack(char piece)
+        {
+            return piece == _pieces[0] || piece == _pieces[1];
+        }
+
+        private int BlackMove = 1;
+        private int RedMove = -1;
+
+        public bool IsValidMove((int x, int y) current, (int x, int y) spot)
+        {
+            char piece = PiecePosition(current.x, current.y);
+
+            if(PiecePosition(spot.x, spot.y) != 'B') return false;
+            if(Turn == 'x' ? !IsBlack(piece) : !IsRed(piece)) return false;
+
+            int rowGap = spot.x - current.x;
+            int colGap = Math.Abs(spot.y - current.y);
+
+            int forward = IsBlack(piece) ? BlackMove : RedMove;
+            bool isKing = piece == _pieces[1] || piece == _pieces[3];
+
+            if(rowGap != forward && rowGap != 2 * forward && !isKing) return false;
+            if (Math.Abs(rowGap) == 1 && colGap == 1) return true;
+
+            if(Math.Abs(rowGap) == 2 && colGap == 2)
             {
-                return false;
-            }
+                int midRow = (current.x + spot.x) / 2;
+                int midCol = (current.y + spot.y) / 2;
+                char middlePiece = PiecePosition(midRow, midCol);
 
-            int rowDifference = newPosition.newRow - position.row;
-            int colDifference = Math.Abs(position.col - newPosition.newCol);
-
-            switch (CheckerBoard[$"{position.row} {position.col}"])
-            {
-                case 'y':
-                    if (rowDifference == - 1 && colDifference == 1) return true;
-                    if (rowDifference == - 2 && colDifference == 2)
-                    {
-                        int midRow = (position.row + newPosition.newRow) / 2;
-                        int midCol = (position.col + newPosition.newCol) / 2;
-                        char jumpped = CheckerBoard[$"{midRow} {midCol}"];
-
-                        if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                        {
-                            JumpedCoords[0, 0] = midRow;
-                            JumpedCoords[0, 1] = midCol;
-
-                            CheckerBoard[$"{midRow} {midCol}"] = 'B';
-
-                            isJumped = true;
-                            return true;
-                        }
-                    }
-
-                    break;
-                case 'Y':
-                    int positiveRowDifference = Math.Abs(rowDifference);
-
-                    if (positiveRowDifference == 1 && colDifference == 1) return true;
-                    if (positiveRowDifference == 2 && colDifference == 2)
-                    {
-                        int midRow = (position.row + newPosition.newRow) / 2;
-                        int midCol = (position.col + newPosition.newCol) / 2;
-                        char jumped = CheckerBoard[$"{midRow} {midCol}"];
-
-                        if (jumped == _pieces[0] || jumped == _pieces[1])
-                        {
-                            JumpedCoords[0, 0] = midRow;
-                            JumpedCoords[0, 1] = midCol;
-
-                            CheckerBoard[$"{midRow} {midCol}"] = 'B';
-
-                            isJumped = true;
-                            return true;
-                        }
-                    }
-
-                    break;
+                bool isOpposite = IsBlack(piece) ? IsRed(middlePiece) : IsBlack(middlePiece);
+                if (isOpposite)
+                {
+                    JumpedCoords[0, 0] = midRow;
+                    JumpedCoords[0, 1] = midCol;
+                    isJumped = true;
+                    return true;
+                }
 
             }
-
             return false;
         }
 
@@ -246,16 +176,7 @@ namespace MiniProject___Checkers.Model
 
         public bool IsInBounds()
         {
-            switch (Turn) 
-            {
-                case 'x':
-                    return Change(IsInXRange);
-                case 'y':
-                    return Change(IsInYRange);
-            }
-
-
-            return false;
+            return Change(IsValidMove);
         }
 
         public bool PlaceChip()
@@ -265,6 +186,10 @@ namespace MiniProject___Checkers.Model
             {
                 CheckerBoard[$"{_referencePosition[1, 0]} {_referencePosition[1, 1]}"] = CheckerBoard[$"{_referencePosition[0, 0]} {_referencePosition[0, 1]}"];
                 CheckerBoard[$"{_referencePosition[0, 0]} {_referencePosition[0, 1]}"] = 'B';
+                
+
+                if(isJumped) CheckerBoard[$"{JumpedCoords[0, 0]} {JumpedCoords[0, 1]}"] = 'B';
+
                 AtEnd((_referencePosition[1, 0], _referencePosition[1, 1]));
 
                 if (IsWon() && IsLoop)
@@ -294,291 +219,61 @@ namespace MiniProject___Checkers.Model
             _referencePosition[1, 1] = position.col;
         }
 
-        private bool CanBlackMove()
+        private bool IsOpposite(char piece, char other)
         {
-            foreach ((string s, char ch) in CheckerBoard)
+            return IsBlack(piece) ? IsRed(other) : IsBlack(other);
+        }
+
+        private bool CanBlackMove() { return CanMove(true); }
+        private bool CanRedMove() { return CanMove(false); }
+
+        private bool CanMove(bool checkBlack)
+        {
+            foreach ((string s, char p) in CheckerBoard)
             {
+                bool isMine = checkBlack ? IsBlack(p) : IsRed(p);
+                if (!isMine) continue;
+
                 int row = int.Parse(s[0].ToString());
                 int col = int.Parse(s[2].ToString());
-                int positive = 1, negative = -1;
-                int positiveJump = 2, negativeJump = -2;
 
-                int leftCol = col + negative;
-                int rightCol = col + positive;
-                int prevRow = row - 1;
-                int nextRow = row + 1;
-                int backJump = row - 2;
-                int jump = row + 2;
-                switch (ch) 
-                {
-                    case 'x':
-                        if(nextRow <= 7)
-                        {
-                            if(leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{nextRow} {leftCol}"] == 'B') return true;
-                            }
+                int forward = IsBlack(p) ? BlackMove : RedMove;
+                bool isKing = p == _pieces[1] || p == _pieces[3];
 
-                            if(rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{nextRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        if(jump <= 7)
-                        {
-
-                            if(leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {leftCol}"];
-
-                                if(jumpped == _pieces[2] ||  jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{jump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if(rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {rightCol}"];
-
-                                if (jumpped == _pieces[2] || jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{jump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-                        }
-                        
-                    break;
-
-                    case 'X':
-                        //Down
-                        if (nextRow <= 7)
-                        {
-                            if (leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{nextRow} {leftCol}"] == 'B') return true;
-                            }
-
-                            if (rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{nextRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        //Up
-                        if(prevRow >= 0)
-                        {
-                            if (leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{prevRow} {leftCol}"] == 'B') return true;
-                            }
-
-                            if (rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{prevRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        //Down Jump
-                        if (jump <= 7)
-                        {
-                            
-                            if (leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {leftCol}"];
-
-                                if (jumpped == _pieces[2] || jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{jump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if (rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {rightCol}"];
-
-                                if (jumpped == _pieces[2] || jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{jump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-                        }
-
-                        //Up Jump
-                        if (backJump >= 0)
-                        {
-                            
-                            if(leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {leftCol}"];
-
-                                if (jumpped == _pieces[2] || jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{backJump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if(rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {rightCol}"];
-
-                                if(jumpped == _pieces[2] || jumpped == _pieces[3])
-                                {
-                                    if (CheckerBoard[$"{backJump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-
-                        }
-                    break;
-                }
+                if (CanMoveInDirection(p, row, col, forward)) return true;
+                if(isKing && CanMoveInDirection(p, row, col, -forward)) return true;
 
             }
             return false;
         }
 
-        private bool CanRedMove()
+        private bool CanMoveInDirection(char piece, int row, int col, int direction)
         {
-            foreach ((string s, char ch) in CheckerBoard)
+            int nextRow = row + direction;
+            int jumpRow = row + 2 * direction;
+            int leftCol = col - 1;
+            int rightCol = col + 1;
+
+            if(nextRow >= 0 && nextRow <= 7)
             {
-                int row = int.Parse(s[0].ToString());
-                int col = int.Parse(s[2].ToString());
-
-                int leftCol = col + - 1;
-                int rightCol = col + 1;
-                int prevRow = row - 1;
-                int nextRow = row + 1;
-                int backJump = row - 2;
-                int jump = row + 2;
-                switch (ch)
-                {
-                    case 'y':
-                        if (prevRow >= 0)
-                        {
-                            if (leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{prevRow} {leftCol}"] == 'B') return true;
-                            }
-
-                            if (rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{prevRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        if (backJump >= 0)
-                        {
-
-                            if (leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {leftCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{backJump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if (rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {rightCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{backJump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-                        }
-                        
-                        break;
-
-                    case 'Y':
-                        //Down
-                        if (nextRow <= 7)
-                        {
-                            if (leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{nextRow} {leftCol}"] == 'B') return true;
-                            }
-
-                            if (rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{nextRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        //Up
-                        if (prevRow >= 0)
-                        {
-                            if (leftCol >= 0)
-                            {
-                                if (CheckerBoard[$"{prevRow} {leftCol}"] == 'B') return true;
-                            }
-
-                            if (rightCol <= 7)
-                            {
-                                if (CheckerBoard[$"{prevRow} {rightCol}"] == 'B') return true;
-                            }
-                        }
-
-                        //Down Jump
-                        if (jump <= 7)
-                        {
-
-                            if (leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {leftCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{jump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if (rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{nextRow} {rightCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{jump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-                        }
-
-                        //Up Jump
-                        if (backJump >= 0)
-                        {
-
-                            if (leftCol - 1 >= 0)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {leftCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{backJump} {leftCol - 1}"] == 'B') return true;
-                                }
-                            }
-
-                            if (rightCol + 1 <= 7)
-                            {
-                                char jumpped = CheckerBoard[$"{prevRow} {rightCol}"];
-
-                                if (jumpped == _pieces[0] || jumpped == _pieces[1])
-                                {
-                                    if (CheckerBoard[$"{backJump} {rightCol + 1}"] == 'B') return true;
-                                }
-                            }
-
-                        }
-                        break;
-                }
-
+                if(leftCol >= 0 && PiecePosition(nextRow, leftCol) == 'B') return true;
+                if (rightCol <= 7 && PiecePosition(nextRow, rightCol) == 'B') return true;
             }
 
+            if(jumpRow >= 0 && jumpRow <= 7)
+            {
+                if (leftCol - 1 >= 0
+                    && IsOpposite(piece, PiecePosition(nextRow, leftCol))
+                    && PiecePosition(jumpRow, leftCol + 1) == 'B') return true;
+
+                if (rightCol + 1 <= 7
+                    && IsOpposite(piece, PiecePosition(nextRow, rightCol))
+                    && PiecePosition(jumpRow, rightCol + 1) == 'B') return true;
+            }
 
             return false;
         }
+
         
         public bool IsDraw()
         {
