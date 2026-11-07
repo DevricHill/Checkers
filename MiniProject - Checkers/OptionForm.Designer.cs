@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            btnSinglePlayer = new Button();
             btnMultiplayer = new Button();
             SuspendLayout();
             // 
@@ -43,19 +42,9 @@
             label1.TabIndex = 0;
             label1.Text = "Game Settings";
             // 
-            // btnSinglePlayer
-            // 
-            btnSinglePlayer.Location = new Point(275, 100);
-            btnSinglePlayer.Name = "btnSinglePlayer";
-            btnSinglePlayer.Size = new Size(230, 31);
-            btnSinglePlayer.TabIndex = 1;
-            btnSinglePlayer.Text = "Single Player";
-            btnSinglePlayer.UseVisualStyleBackColor = true;
-            btnSinglePlayer.Click += btnSinglePlayer_Click;
-            // 
             // btnMultiplayer
             // 
-            btnMultiplayer.Location = new Point(275, 200);
+            btnMultiplayer.Location = new Point(275, 150);
             btnMultiplayer.Name = "btnMultiplayer";
             btnMultiplayer.Size = new Size(230, 31);
             btnMultiplayer.TabIndex = 2;
@@ -70,7 +59,6 @@
             BackColor = SystemColors.ControlDark;
             ClientSize = new Size(800, 450);
             Controls.Add(btnMultiplayer);
-            Controls.Add(btnSinglePlayer);
             Controls.Add(label1);
             Name = "OptionForm";
             Text = "OptionForm";
@@ -81,7 +69,6 @@
         #endregion
 
         private Label label1;
-        private Button btnSinglePlayer;
         private Button btnMultiplayer;
     }
 }

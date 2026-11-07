@@ -21,7 +21,7 @@ namespace MiniProject___Checkers
             InitializeComponent();
         }
 
-        //Visual Repesentation of the board
+        //Visual Representation of the board
         Button[,] buttons = new Button[8, 8];
         void SetUp()
         {
@@ -111,7 +111,7 @@ namespace MiniProject___Checkers
                         {
                             selected[counter] = clicked;
                             txtGridInfo.Text = $"{newCheckers.PlayerMoved} Piece: {row + 1}-{col + 1}";
-                            newCheckers.ResetPostion();
+                            newCheckers.ResetPosition();
 
                             newCheckers.Insert((row, col), newCheckers.PrePosition);
                             counter++;
@@ -142,7 +142,7 @@ namespace MiniProject___Checkers
                     }
                     else
                     {
-                        txtGridInfo.Text = $"{row}-{col}: is not a valid choice";
+                        txtGridInfo.Text = $"{row + 1}-{col + 1}: is not a valid choice";
                         
                     }
 
@@ -176,8 +176,7 @@ namespace MiniProject___Checkers
             SetUp();
             CurrentBoard();
 
-            if (Data.IsSinglePlayer) SinglePlayer();
-            else Multiplayer();
+            Multiplayer();
 
             ShowTurn();
 
@@ -190,38 +189,35 @@ namespace MiniProject___Checkers
             }
         }
 
-        private void SinglePlayer()
-        {
-            
-        }
-
         private void Multiplayer()
         {
             MessageBox.Show("Multiplayer Player Game", "Game Starting");
+        }
+
+        private void EndGame(string message)
+        {
+            MessageBox.Show(message);
+            new MainMenuForm().Show();
+            this.Close();
         }
 
         private void GameProgress()
         {
             if (!newCheckers.IsLoop)
             {
-                MessageBox.Show(newCheckers.HasWon);
-
-                Form1 form1 = new Form1();
-
-                form1.Show();
-                this.Close();
+                EndGame(newCheckers.HasWon);
                 return;
-
             }
 
             if (newCheckers.IsDraw())
             {
-                MessageBox.Show("It's a draw!");
-                Form1 form1 = new Form1();
-
-                form1.Show();
-                this.Close();
+                EndGame("It's a draw!");
                 return;
+            }
+
+            if (newCheckers.SkipTurn())
+            {
+                txtGridInfo.Text = $"No legal moves. {newCheckers.PlayerMoved}'s turn";
             }
         }
 
