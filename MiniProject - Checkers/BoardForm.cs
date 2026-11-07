@@ -189,38 +189,35 @@ namespace MiniProject___Checkers
             }
         }
 
-        private void SinglePlayer()
-        {
-            
-        }
-
         private void Multiplayer()
         {
             MessageBox.Show("Multiplayer Player Game", "Game Starting");
+        }
+
+        private void EndGame(string message)
+        {
+            MessageBox.Show(message);
+            new MainMenuForm().Show();
+            this.Close();
         }
 
         private void GameProgress()
         {
             if (!newCheckers.IsLoop)
             {
-                MessageBox.Show(newCheckers.HasWon);
-
-                MainMenuForm form1 = new MainMenuForm();
-
-                form1.Show();
-                this.Close();
+                EndGame(newCheckers.HasWon);
                 return;
-
             }
 
             if (newCheckers.IsDraw())
             {
-                MessageBox.Show("It's a draw!");
-                MainMenuForm form1 = new MainMenuForm();
-
-                form1.Show();
-                this.Close();
+                EndGame("It's a draw!");
                 return;
+            }
+
+            if (newCheckers.SkipTurn())
+            {
+                txtGridInfo.Text = $"No legal moves. {newCheckers.PlayerMoved}'s turn";
             }
         }
 

@@ -21,7 +21,9 @@ namespace MiniProject___Checkers
                 "\nNo double jumps. One jump ends your turn." +
                 "\nKings: reach the far row to become a king (this ends your turn). " +
                 "\nKings step or jump forward or backward, still one square or one jump at a time." +
-                "\nWin: your opponent has no pieces or no legal moves.";
+                "\nWin: capture all of your opponent's pieces." +
+                "\nNo legal moves: your turn is skipped." +
+                "\nDraw: neither player can move.";
         }
     }
 }

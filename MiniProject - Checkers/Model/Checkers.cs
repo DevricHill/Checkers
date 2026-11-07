@@ -264,7 +264,7 @@ namespace MiniProject___Checkers.Model
             {
                 if (leftCol - 1 >= 0
                     && IsOpposite(piece, PiecePosition(nextRow, leftCol))
-                    && PiecePosition(jumpRow, leftCol + 1) == 'B') return true;
+                    && PiecePosition(jumpRow, leftCol - 1) == 'B') return true;
 
                 if (rightCol + 1 <= 7
                     && IsOpposite(piece, PiecePosition(nextRow, rightCol))
@@ -277,9 +277,20 @@ namespace MiniProject___Checkers.Model
         
         public bool IsDraw()
         {
-            if (!CanBlackMove() && !CanRedMove()) return true;
-            if (!CanBlackMove() && Turn == _pieces[0]) SwitchTurn();
-            if (!CanRedMove() && Turn == _pieces[2]) SwitchTurn();
+            return !CanBlackMove() && !CanRedMove();
+        }
+
+        public bool SkipTurn()
+        {
+            bool blackStuck = Turn == _pieces[0] && !CanBlackMove();
+            bool redStuck = Turn == _pieces[2] && !CanRedMove();
+
+            if (blackStuck || redStuck)
+            {
+                SwitchTurn();
+                return true;
+            }
+
             return false;
         }
 
