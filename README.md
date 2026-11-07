@@ -31,3 +31,5 @@ C# · .NET 10 · Windows Forms · object-oriented design · delegates · Diction
 - Multi-jump captures
 - Unit tests for the rules engine (xUnit)
 - A single-player mode against a simple AI
+
+**Download:** [Latest release (Windows)](https://github.com/DevricHill/checkers-winforms/releases/latest)
