@@ -32,4 +32,4 @@ C# · .NET 10 · Windows Forms · object-oriented design · delegates · Diction
 - Unit tests for the rules engine (xUnit)
 - A single-player mode against a simple AI
 
-**Download:** [Latest release (Windows)](https://github.com/DevricHill/checkers-winforms/releases/latest)
+**Download:** [V1.0.0 (Windows)](https://github.com/DevricHill/checkers-winforms/releases/latest)
